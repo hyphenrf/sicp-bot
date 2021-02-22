@@ -1,0 +1,4 @@
+(executable
+ (name bot)
+ (public_name bot)
+ (libraries unix))

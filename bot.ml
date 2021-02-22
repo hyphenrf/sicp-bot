@@ -33,7 +33,7 @@ let array_of_lines chan =
 
 let () = Random.self_init ()
 let shuf arr = if Array.length arr > 2 then
-  for i = 1 to Array.length arr - 1 do
+  for _ = 1 to Array.length arr - 1 do
   	let x = Random.int (Array.length arr - 1) in
   	let top = arr.!(0) in
   	  arr.!(0)<- arr.!(x);
