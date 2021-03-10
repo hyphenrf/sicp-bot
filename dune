@@ -1,5 +1,11 @@
 (executable
  (name bot)
  (public_name sicp-bot)
+ (ocamlopt_flags -compact -O2 -function-sections
+     -ccopt -Wl,--gc-sections -ccopt -s -ccopt -Os -ccopt -flto)
  (libraries curly yojson)
  (preprocess (pps ppx_deriving_yojson)))
+
+(install 
+ (section share)
+ (files quotes))
