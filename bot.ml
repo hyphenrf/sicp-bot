@@ -48,32 +48,11 @@ let post quote db =
   end
   else begin
      let db = DB.add hash db in
-     (* TODO: POST request here *)
         send quote |> function
         | `succ -> commit db past; `succ, db
         | `fail -> `fail, db
   end
 
-(*
-let shuf arr = if Array.length arr > 2 then
-  for _ = 1 to Array.length arr - 1 do
-  	let x = Random.int (Array.length arr - 1) in
-  	let top = arr.!(0) in
-  	  arr.!(0)<- arr.!(x);
-  	  arr.!(x)<- top
-  done
-
-let secs = 86400
-let _daily = fun () ->
-  shuf lines;
-  let rec loop i db =
-    if i > 0 then
-       match post lines.!(i-1) db with
-       | `succ, newdb -> Unix.sleep secs; loop (i-1) newdb
-       | `dupe, db    -> loop (i-1) db
-       | `fail, db    -> loop i db
-  in loop (Array.length lines) (past ())
-*)
 
 let _once = fun () ->
   let rec attempt () =
