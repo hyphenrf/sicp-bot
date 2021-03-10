@@ -1,4 +1,5 @@
 (executable
  (name bot)
- (public_name bot)
- (libraries unix))
+ (public_name sicp-bot)
+ (libraries curly yojson)
+ (preprocess (pps ppx_deriving_yojson)))
