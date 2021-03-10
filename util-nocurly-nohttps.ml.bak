@@ -1,0 +1,59 @@
+let open_append =
+    open_out_gen [Open_creat; Open_append; Open_nonblock] 0o660
+let (.!()<-) = Array.unsafe_set
+let (.!())   = Array.unsafe_get
+
+let array_of_lines chan =
+  let lines = Queue.create () in
+    begin try
+      while true do
+        Queue.push (input_line chan) lines
+      done
+    with End_of_file -> ()
+    end;
+
+    let arr = Array.make (Queue.length lines) "" in
+    for i = 0 to Array.length arr - 1 do
+      arr.!(i)<- Queue.pop lines
+    done;
+  arr
+
+let request ?data ?auth ~host path =
+  let head = match data with
+    | None -> "GET "^path
+    | Some xs -> "POST "^path
+        ^"?"^(List.map (fun (a,b) -> a^"="^b) xs |> String.concat "&")
+  in
+  let auth = match auth with
+    | None -> ""
+    | Some tok -> "Authorization: "^tok^"\r\n"
+  in
+  let addr = Unix.(ADDR_INET((gethostbyname host).h_addr_list.(0),80)) in
+  let sock = Unix.(socket PF_INET SOCK_STREAM 0) in
+  let request =
+  String.concat "" [ head; " HTTP/1.1\r\n"
+                   ; auth
+                   ; "Host: "^host^"\r\n"
+                   ; "User-Agent: OCaml.Unix\r\n"
+                   ; "Connection: close\r\n"
+                   ; "\r\n" ]
+  in
+  let buf = Bytes.create (16*1024) in
+  print_endline request;
+  Unix.connect sock addr;
+  Unix.write_substring sock request 0 (String.length request)
+  |> fun bytes -> begin if bytes > 0 then
+     try for i = 0 to 15 do
+         Unix.read sock buf (i*1024) 1024
+         |> fun bytes -> if bytes = 0 then raise Exit
+     done with Exit -> ()
+  end; buf
+
+let handle ~ok ~err resp = resp
+  |> Bytes.to_string
+  |> Text.split ~sep:"\r\n\r\n"
+  |> fun[@warning "-8"] [head;body] ->
+        match String.split_on_char ' ' head with
+        | _::code::_ when code = "200" -> ok (head, body)
+        | _::code::message -> err (code, match message with msg::_ -> " "^msg | [] -> "")
+        | _ -> assert false
