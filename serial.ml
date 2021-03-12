@@ -24,7 +24,7 @@ let register name = request ~host
   |> Util.handle
        ~ok:(fun resp -> resp.body) 
        ~err:(fun resp -> failwith
-         (Printf.sprintf "Register: %d %s" resp.code resp.body))
+         (Printf.sprintf "Register: %d\n%s" resp.code resp.body))
   |> Yojson.Safe.from_string
   |> register_of_yojson
 
@@ -60,7 +60,7 @@ let get_token (req, code) = request ~host
   |> Util.handle
        ~ok:(fun resp -> resp.body) 
        ~err:(fun resp -> failwith
-         (Printf.sprintf "Get Token: %d %s" resp.code resp.body))
+         (Printf.sprintf "Get Token: %d\n%s" resp.code resp.body))
   |> Yojson.Safe.from_string
   |> token_of_yojson
 

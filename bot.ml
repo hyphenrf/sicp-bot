@@ -33,7 +33,7 @@ request ~host
         ; "visibility", "public" ]
   |> handle ~ok:(fun _-> `succ)
             ~err:(fun resp ->
-              Printf.eprintf "Error: %d %s" resp.code resp.body; `fail)
+              Printf.eprintf "Send: %d\n%s" resp.code resp.body; `fail)
 
 let post quote db =
   let hash = Digest.string quote in
