@@ -25,7 +25,7 @@ let commit db past =
     output_string chan @@ Digest.to_hex hash; output_char chan '\n') diff;
   close_out chan
 
-let send s = print_endline s; `succ (*
+let send s = (* print_endline s; `succ *)
 request ~host
   "/api/v1/statuses"
   ~auth
@@ -34,7 +34,6 @@ request ~host
   |> handle ~ok:(fun _-> `succ)
             ~err:(fun resp ->
               Printf.eprintf "Error: %d %s" resp.code resp.body; `fail)
-              *)
 
 let post quote db =
   let hash = Digest.string quote in
