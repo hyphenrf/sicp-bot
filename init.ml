@@ -1,8 +1,7 @@
 open Util
 
 let init =
-  Random.self_init ();
-  []|> List.iter at_exit
+  Random.self_init ()
 
 let quotes  = "quotes"
 let quoted  = "db.obj"
