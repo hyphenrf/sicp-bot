@@ -29,16 +29,16 @@ let register name = request ~host
   |> register_of_yojson
 
 
-let authorize req = print_endline begin
+let authorize req = begin
   "https://"^host^"/oauth/authorize?"^String.concat "&" [
     "response_type=code";
     "client_id="^req.client_id;
     "redirect_uri="^req.redirect_uri;
     "scopes="^scope;
-  ] end;
-  print_newline ();
-  print_endline "Login and then paste code and press enter.";
-  read_line ()
+  ]^"\nLogin and then paste code and press enter." end
+  |> print_endline
+  |> read_line
+  |> String.trim
   |> fun code -> Ok (req, code)
 
 
@@ -65,12 +65,16 @@ let get_token (req, code) = request ~host
   |> token_of_yojson
 
 let auth = match Sys.getenv_opt "TOKEN" with
-  | Some tok -> tok
+  | Some tok -> String.trim tok
   | None ->
   begin
       prerr_endline "No token provided. Requesting a new token";
       register name |>* authorize |>* get_token |> function
-        | Ok t -> t.token_type ^" "^ t.access_token
+        | Ok t -> let tok = t.token_type ^" "^ t.access_token in
+               Printf.printf "\n\n Please call the bot with TOKEN=%s \
+                 environment variable to continue posting with the current \
+                 authorization.\n" tok;
+               tok
         | Error s -> failwith s
   end
 
