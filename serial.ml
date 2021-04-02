@@ -6,7 +6,11 @@ module F (M:sig val host : string
 let host, name, scope = M.(host, name, scope)
 let request = Util.request
 
-let ( |>* ) = Result.bind
+let bind f = function
+  | Ok x -> f x
+  | Error e -> Error e
+
+let ( |>* ) m f = bind f m
 
 
 type register = {

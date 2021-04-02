@@ -17,7 +17,7 @@ let past = fun () ->
     in
     let db = fill DB.empty in
     close_in chan; db
-    
+
 let commit db past =
   let chan = open_append quoted in
   let diff = DB.diff db past in
@@ -56,7 +56,7 @@ let post quote db =
 let _once = fun () ->
   let rec attempt () =
   let index = Random.int (Array.length lines) in
-    match post lines.!(index) (past ()) with
+    match post lines.(index) (past ()) with
     | `fail, _ -> exit 1
     | `dupe, _ -> attempt ()
     | `succ, _ -> ()

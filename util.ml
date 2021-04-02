@@ -1,7 +1,5 @@
 let open_append =
     open_out_gen [Open_creat; Open_append; Open_nonblock] 0o660
-let (.!()<-) = Array.unsafe_set
-let (.!())   = Array.unsafe_get
 
 let array_of_lines chan =
   let lines = Queue.create () in
@@ -14,7 +12,7 @@ let array_of_lines chan =
 
     let arr = Array.make (Queue.length lines) "" in
     for i = 0 to Array.length arr - 1 do
-      arr.!(i)<- Queue.pop lines
+      arr.(i) <- Queue.pop lines
     done;
   arr
 
@@ -42,7 +40,7 @@ let request ?data ?auth ~host path =
       let ppf = Format.formatter_of_buffer buf in
       Format.fprintf ppf "Curly Error: %a" Curly.Error.pp error;
       failwith (Buffer.contents buf)
-      
+
 let handle ~ok ~err (resp: Curly.Response.t) = 
   if resp.code = 200
   then ok  resp
