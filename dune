@@ -1,13 +1,18 @@
 (executable
- (name bot)
  (modes byte)
  (public_name sicp-bot)
+ (name bot)
+ (libraries curly yojson dune-site)
+ (modules sites bot util serial init)
  (ocamlopt_flags -compact -O2 ;-function-sections
      -ccopt -Wl,--gc-sections -ccopt -s -ccopt -Os -ccopt -flto)
  (ocamlc_flags -compat-32)
- (libraries curly yojson)
  (preprocess (pps ppx_deriving_yojson)))
 
-(install 
- (section share)
+(generate_sites_module
+ (module sites)
+ (sites sicp-bot))
+
+(install
+ (section (site (sicp-bot stuff)))
  (files quotes))
